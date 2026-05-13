@@ -7,7 +7,7 @@
 Agent harness preset manager for effective harness engineering
 
 [![npm version](https://img.shields.io/npm/v/outo-harness)](https://npm.npmjs.com/package/outo-harness)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Purpose
 
@@ -198,4 +198,4 @@ All these formats serve the same purpose: give agents guidance about how to work
 
 ## License
 
-MIT
+Apache 2.0
