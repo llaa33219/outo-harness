@@ -28,13 +28,41 @@ export async function addCommand(source: string, harnessName?: string): Promise<
         process.exit(1);
       }
       
+      console.log(`Found ${harnesses.length} harness(es). Installing all...`);
       console.log('');
-      console.log('Available harnesses:');
+      
       for (const h of harnesses) {
-        console.log(`  - ${h}`);
+        const existing = await getEntry(h);
+        if (existing) {
+          console.log(`⏭ Harness "${h}" is already registered. Skipping.`);
+          continue;
+        }
+        
+        try {
+          console.log(`Adding harness "${h}"...`);
+          await cloneHarnessFromRepo(sourceInfo.url, h, h);
+          
+          const harnessPath = getHarnessPath(h);
+          const harnessFile = path.join(harnessPath, 'HARNESS.md');
+          const metadata = await parseHarnessFile(harnessFile);
+          
+          await addEntry({
+            name: metadata.name,
+            description: metadata.description,
+            source: sourceInfo.url,
+            type: 'git',
+            installedAt: new Date().toISOString(),
+            harnessPath: harnessPath,
+          });
+          
+          console.log(`✓ "${metadata.name}" added`);
+        } catch (error) {
+          console.error(`✗ Failed to add "${h}":`, error instanceof Error ? error.message : String(error));
+        }
       }
+      
       console.log('');
-      console.log(`Usage: npx outo-harness add ${source} <harness-name>`);
+      console.log('Done!');
       return;
     }
     
