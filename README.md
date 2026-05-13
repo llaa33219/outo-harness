@@ -128,15 +128,16 @@ The harness provides a starting point, not a rigid template. Projects adapt it t
 
 Think about what aspects of agent control you want to standardize.
 
-### Step 2: Create the Directory
+### Step 2: Create the Repository
 
 ```bash
-mkdir -p ~/.agents/harness/my-harness
+mkdir my-harness-repo && cd my-harness-repo
+mkdir -p harness/my-harness
 ```
 
 ### Step 3: Write HARNESS.md
 
-Follow the format above. Start with frontmatter, then write your guidance.
+Create `harness/my-harness/HARNESS.md` with frontmatter and your guidance.
 
 ### Step 4: Test It
 
@@ -147,14 +148,21 @@ Run an agent in a project that should use your harness. Refine based on actual b
 Publish your harness so others can benefit:
 
 ```bash
-# If using a GitHub repo
 git init
-git add HARNESS.md
+git add .
 git commit -m "Initial harness"
-git push origin main
+git remote add origin https://github.com/you/my-harness-repo.git
+git push -u origin main
+```
 
-# Then users can add with:
-npx outo-harness add your-username/your-repo
+Users can then install with:
+
+```bash
+# Install all harnesses from repo
+npx outo-harness add you/my-harness-repo
+
+# Install specific harness
+npx outo-harness add you/my-harness-repo my-harness
 ```
 
 ## Registry Format
