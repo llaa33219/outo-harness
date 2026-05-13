@@ -12,7 +12,7 @@ program
 
 // Add command
 program
-  .command('add <source>')
+  .command('add <source> [harness-name]')
   .description('Add a harness from a GitHub repository or npm package')
   .action(addCommand);
 

@@ -1,11 +1,11 @@
 import * as path from 'path';
 import { detectSourceType } from '../core/source.js';
-import { cloneRepo, downloadNpmPackage } from '../core/git.js';
+import { cloneRepo, downloadNpmPackage, listHarnessesInRepo, cloneHarnessFromRepo } from '../core/git.js';
 import { parseHarnessFile } from '../core/parser.js';
 import { addEntry, getEntry } from '../core/registry.js';
-import { getHarnessPath, harnessExists } from '../core/config.js';
+import { getHarnessPath } from '../core/config.js';
 
-export async function addCommand(source: string): Promise<void> {
+export async function addCommand(source: string, harnessName?: string): Promise<void> {
   try {
     const sourceInfo = detectSourceType(source);
     
@@ -18,24 +18,50 @@ export async function addCommand(source: string): Promise<void> {
       process.exit(1);
     }
     
-    const existing = await getEntry(sourceInfo.name);
+    if (sourceInfo.type === 'git' && !harnessName) {
+      console.log(`Checking available harnesses in "${source}"...`);
+      const harnesses = await listHarnessesInRepo(sourceInfo.url);
+      
+      if (harnesses.length === 0) {
+        console.error('No harnesses found in this repository.');
+        console.error('Expected structure: harness/<name>/HARNESS.md');
+        process.exit(1);
+      }
+      
+      console.log('');
+      console.log('Available harnesses:');
+      for (const h of harnesses) {
+        console.log(`  - ${h}`);
+      }
+      console.log('');
+      console.log(`Usage: npx outo-harness add ${source} <harness-name>`);
+      return;
+    }
+    
+    const targetName = harnessName || sourceInfo.name;
+    
+    const existing = await getEntry(targetName);
     if (existing) {
-      console.log(`Harness "${sourceInfo.name}" is already registered.`);
+      console.log(`Harness "${targetName}" is already registered.`);
       console.log(`Location: ${existing.harnessPath}`);
       console.log('');
       console.log('To update, run: npx outo-harness update');
       return;
     }
     
-    console.log(`Adding harness "${sourceInfo.name}"...`);
+    console.log(`Adding harness "${targetName}"...`);
     
     if (sourceInfo.type === 'git') {
-      await cloneRepo(sourceInfo.url, sourceInfo.name);
+      if (harnessName) {
+        await cloneHarnessFromRepo(sourceInfo.url, harnessName, targetName);
+      } else {
+        await cloneRepo(sourceInfo.url, targetName);
+      }
     } else if (sourceInfo.type === 'npm') {
-      await downloadNpmPackage(sourceInfo.url, sourceInfo.name);
+      await downloadNpmPackage(sourceInfo.url, targetName);
     }
     
-    const harnessPath = getHarnessPath(sourceInfo.name);
+    const harnessPath = getHarnessPath(targetName);
     const harnessFile = path.join(harnessPath, 'HARNESS.md');
     
     let metadata;
