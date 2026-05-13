@@ -20,6 +20,9 @@ outo-harness manages harness presets — reusable starting points that you adapt
 ## Quick Start
 
 ```bash
+# Add the skill for agent integration
+npx skills add llaa33219/outo-harness
+
 # Add a harness from GitHub
 npx outo-harness add owner/repo
 
@@ -29,6 +32,8 @@ npx outo-harness list
 # Update all harnesses
 npx outo-harness update
 ```
+
+The skill enables agents to discover and apply harnesses to your project's AGENT.md.
 
 ## Commands
 
@@ -121,6 +126,23 @@ When setting up a new project:
 4. Customize for the project's specific needs
 
 The harness provides a starting point, not a rigid template. Projects adapt it to their specific context.
+
+## Agent Skill
+
+The skill enables agents to discover and apply harnesses automatically.
+
+```bash
+# Install the skill
+npx skills add llaa33219/outo-harness
+```
+
+With the skill installed, agents can:
+- Discover available harnesses via `npx outo-harness list`
+- Read harness content from `~/.agents/harness/<name>/HARNESS.md`
+- Adapt harness guidance to the project's AGENT.md
+- Preserve existing AGENT.md structure while adding harness guidance
+
+The skill provides a workflow for agents to analyze the project, select appropriate harnesses, and merge guidance without breaking existing conventions.
 
 ## Creating Your Own Harness
 
