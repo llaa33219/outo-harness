@@ -9,6 +9,7 @@ export interface RegistryEntry {
   type: 'git' | 'npm';
   installedAt: string;
   harnessPath: string;
+  repoHarnessName?: string;
 }
 
 interface Registry {

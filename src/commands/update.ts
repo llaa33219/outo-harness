@@ -1,8 +1,18 @@
 import * as path from 'path';
+import * as fs from 'fs/promises';
 import { loadRegistry, updateEntry } from '../core/registry.js';
-import { pullRepo, downloadNpmPackage } from '../core/git.js';
+import { pullRepo, downloadNpmPackage, cloneHarnessFromRepo } from '../core/git.js';
 import { parseHarnessFile } from '../core/parser.js';
 import { getHarnessPath } from '../core/config.js';
+
+async function isGitRepo(dir: string): Promise<boolean> {
+  try {
+    await fs.access(path.join(dir, '.git'));
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function updateCommand(): Promise<void> {
   try {
@@ -25,7 +35,16 @@ export async function updateCommand(): Promise<void> {
         console.log(`Updating "${entry.name}"...`);
         
         if (entry.type === 'git') {
-          await pullRepo(entry.name);
+          const harnessPath = getHarnessPath(entry.name);
+          const isGit = await isGitRepo(harnessPath);
+          
+          if (isGit) {
+            await pullRepo(entry.name);
+          } else if (entry.repoHarnessName) {
+            await cloneHarnessFromRepo(entry.source, entry.repoHarnessName, entry.name);
+          } else {
+            throw new Error('Cannot update: not a git repository and no repo harness name stored');
+          }
         } else if (entry.type === 'npm') {
           await downloadNpmPackage(entry.source, entry.name);
         }

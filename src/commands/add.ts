@@ -53,6 +53,7 @@ export async function addCommand(source: string, harnessName?: string): Promise<
             type: 'git',
             installedAt: new Date().toISOString(),
             harnessPath: harnessPath,
+            repoHarnessName: h,
           });
           
           console.log(`✓ "${metadata.name}" added`);
