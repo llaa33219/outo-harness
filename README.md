@@ -21,7 +21,7 @@ outo-harness manages harness presets — reusable starting points that you adapt
 
 ```bash
 # Add the skill for agent integration
-npx skills add llaa33219/outo-harness
+npx skills add https://github.com/llaa33219/outo-harness
 
 # Add a harness from GitHub
 npx outo-harness add owner/repo
@@ -133,7 +133,7 @@ The skill enables agents to discover and apply harnesses automatically.
 
 ```bash
 # Install the skill
-npx skills add llaa33219/outo-harness
+npx skills add https://github.com/llaa33219/outo-harness
 ```
 
 With the skill installed, agents can:
